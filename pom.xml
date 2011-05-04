@@ -29,4 +29,8 @@
 			<version>[0.8.0-beta1,)</version>
 		</dependency>
 	</dependencies>
+	<!-- Common version -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 </project>
