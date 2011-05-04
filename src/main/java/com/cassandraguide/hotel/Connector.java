@@ -1,7 +1,5 @@
 package com.cassandraguide.hotel;
 
-import static com.cassandraguide.hotel.Constants.KEYSPACE;
-
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.thrift.TException;
@@ -25,7 +23,7 @@ public class Connector {
         TProtocol proto = new TBinaryProtocol(tf);
         Cassandra.Client client = new Cassandra.Client(proto);
         tr.open();
-        client.set_keyspace(KEYSPACE);
+
         return client;
     }
 

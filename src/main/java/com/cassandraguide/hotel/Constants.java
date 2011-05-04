@@ -14,4 +14,7 @@ public class Constants {
     public static final ConsistencyLevel CL = ConsistencyLevel.ONE;
     public static final String HOST = "localhost";
     public static final int PORT = 9160;
+
+
+
 }

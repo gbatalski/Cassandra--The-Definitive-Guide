@@ -4,6 +4,7 @@ import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.util.List;
 
 import org.apache.cassandra.thrift.Cassandra;
@@ -58,8 +59,8 @@ public class SimpleWriteRead {
     // not paying attention to exceptions here
     public static void main(String[] args) throws UnsupportedEncodingException,
             InvalidRequestException, UnavailableException, TimedOutException,
-            TException, NotFoundException {
-
+            TException, NotFoundException, CharacterCodingException {
+        
         TTransport tr = new TSocket(HOST, PORT);
         // new default in 0.7 is framed transport
         TFramedTransport tf = new TFramedTransport(tr);
@@ -77,12 +78,17 @@ public class SimpleWriteRead {
 
         // insert the name column
         LOG.debug("Inserting row for key " + ByteBufferUtil.string(userIDKey));
-        client.insert(userIDKey, cp, new Column(bytes("name"),
-                bytes("George Clinton"), ts), CL);
+        Column col = new Column(bytes("name"));
+        col.setValue(bytes("George Clinton"));
+        col.setTimestamp(ts);
 
+        client.insert(userIDKey, cp, col, CL);
+
+        col = new Column(bytes("age"));
+        col.setValue(bytes("69"));
+        col.setTimestamp(ts);
         // insert the Age column
-        client.insert(userIDKey, cp, new Column(bytes("age"), bytes("69"), ts),
-                CL);
+        client.insert(userIDKey, cp, col, CL);
 
         LOG.debug("Row insert done.");
 
@@ -92,7 +98,7 @@ public class SimpleWriteRead {
         // create a representation of the Name column
         ColumnPath colPathName = new ColumnPath(cfName);
         colPathName.setColumn("name".getBytes(UTF8));
-        Column col = client.get(userIDKey, colPathName, CL).getColumn();
+        col = client.get(userIDKey, colPathName, CL).getColumn();
 
         LOG.debug("Column name: " + ByteBufferUtil.string(col.name));
         LOG.debug("Column value: " + ByteBufferUtil.string(col.value));

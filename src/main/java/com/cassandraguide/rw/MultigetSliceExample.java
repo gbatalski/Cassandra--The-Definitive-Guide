@@ -4,6 +4,7 @@ import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class MultigetSliceExample {
 
     public static void main(String[] args) throws UnsupportedEncodingException,
             InvalidRequestException, UnavailableException, TimedOutException,
-            TException, NotFoundException {
+            TException, NotFoundException, CharacterCodingException {
 
         Connector conn = new Connector();
         Cassandra.Client client = conn.connect();

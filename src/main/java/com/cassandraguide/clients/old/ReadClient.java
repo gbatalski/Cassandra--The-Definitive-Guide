@@ -78,7 +78,7 @@ public class ReadClient {
             try {
                 List<Row> rows;
                 try {
-                    rows = StorageProxy.readProtocol(commands,
+                    rows = StorageProxy.read(commands,
                             ConsistencyLevel.ANY);
 
                     LOG.debug("Found it!");

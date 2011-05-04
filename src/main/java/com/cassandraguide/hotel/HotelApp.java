@@ -1,7 +1,7 @@
 package com.cassandraguide.hotel;
 
 import static com.cassandraguide.hotel.Constants.CL;
-import static com.cassandraguide.hotel.Constants.UTF8;
+import static com.cassandraguide.hotel.Constants.*;
 import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
 import java.util.ArrayList;
@@ -134,7 +134,9 @@ public class HotelApp {
         sliceRange.setStart(hotel.getBytes());
         sliceRange.setFinish(hotel.getBytes());
         predicate.setSlice_range(sliceRange);
-
+        
+    
+       
         // read all columns in the row
         String scFamily = "PointOfInterest";
         ColumnParent parent = new ColumnParent(scFamily);
@@ -150,6 +152,8 @@ public class HotelApp {
         // only row key + first column are indexed
         Connector cl = new Connector();
         Cassandra.Client client = cl.connect();
+        client.set_keyspace(KEYSPACE);
+        
         List<KeySlice> slices = client.get_range_slices(parent, predicate,
                 keyRange, CL);
 
@@ -165,12 +169,12 @@ public class HotelApp {
                 List<Column> colsInSc = sc.columns;
 
                 for (Column c : colsInSc) {
-                    String colName = new String(c.name.array(), UTF8);
+                    String colName = new String(c.getName(), UTF8);
                     if (colName.equals("desc")) {
-                        poi.desc = new String(c.value.array(), UTF8);
+                        poi.desc = new String(c.getValue(), UTF8);
                     }
                     if (colName.equals("phone")) {
-                        poi.phone = new String(c.value.array(), UTF8);
+                        poi.phone = new String(c.getValue(), UTF8);
                     }
                 }
 
@@ -210,6 +214,7 @@ public class HotelApp {
 
         Connector cl = new Connector();
         Cassandra.Client client = cl.connect();
+        client.set_keyspace(KEYSPACE);
         List<KeySlice> keySlices = client.get_range_slices(parent, predicate,
                 keyRange, CL);
 

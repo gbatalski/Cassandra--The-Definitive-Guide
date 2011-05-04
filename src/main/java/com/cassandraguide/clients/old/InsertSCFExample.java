@@ -39,7 +39,7 @@ public class InsertSCFExample {
 
     private static final Logger LOG = Logger.getLogger(InsertSCFExample.class);
 
-    private static final String UTF8 = "UTF8";
+    
     private static final String HOST = "localhost";
     private static final int PORT = 9160;
 
@@ -70,12 +70,16 @@ public class InsertSCFExample {
         long ts = System.currentTimeMillis();
 
         // set up columns for Clarion
-        Column clarionNameCol = new Column(bytes("name"), bytes("Clarion SF"),
-                ts);
-        Column clarionAddressCol = new Column(bytes("address"),
-                bytes("123 Market St., SF"), ts);
-        Column clarionPhoneCol = new Column(bytes("phone"),
-                bytes("415-555-1000"), ts);
+        Column clarionNameCol = new Column(bytes("name"));
+        clarionNameCol.setValue(bytes("Clarion SF"));
+        clarionNameCol.setTimestamp(ts);
+
+        Column clarionAddressCol = new Column(bytes("address"));
+        clarionAddressCol.setValue(bytes("123 Market St., SF"));
+        clarionAddressCol.setTimestamp(ts);
+        Column clarionPhoneCol = new Column(bytes("phone"));
+        clarionPhoneCol.setValue(bytes("415-555-1000"));
+        clarionPhoneCol.setTimestamp(ts);
 
         cols.add(clarionNameCol);
         cols.add(clarionAddressCol);
@@ -106,12 +110,17 @@ public class InsertSCFExample {
         // subcolumns
 
         // set up columns for Comfort
-        Column comfortNameCol = new Column(bytes("name"),
-                bytes("Comfort Midtwown"), ts);
-        Column comfortAddressCol = new Column(bytes("address"),
-                bytes("57th Street, NYC"), ts);
-        Column comfortPhoneCol = new Column(bytes("phone"),
-                bytes("212-555-1000"), ts);
+        Column comfortNameCol = new Column(bytes("name"));
+        comfortNameCol.setValue(bytes("Comfort Midtwown"));
+        comfortNameCol.setTimestamp(ts);
+
+        Column comfortAddressCol = new Column(bytes("address"));
+        comfortAddressCol.setValue(bytes("57th Street, NYC"));
+        comfortAddressCol.setTimestamp(ts);
+
+        Column comfortPhoneCol = new Column(bytes("phone"));
+        comfortPhoneCol.setValue(bytes("212-555-1000"));
+        comfortPhoneCol.setTimestamp(ts);
 
         // set up to reuse
         cols.clear();
@@ -128,8 +137,6 @@ public class InsertSCFExample {
         row.add(superCol2);
 
         dataMap.put(SUPERCF_NAME, row);
-
-        String comfortRowKey = "Comfort_789";
 
         // insert the second hotel
         mutationMap.clear();

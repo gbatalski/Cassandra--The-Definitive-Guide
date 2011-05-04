@@ -4,6 +4,7 @@ import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.Column;
@@ -42,14 +43,14 @@ public class GetExample {
 
     private static final Logger LOG = Logger.getLogger(GetExample.class);
 
-    private static final String UTF8 = "UTF8";
+    
     private static final String HOST = "localhost";
     private static final int PORT = 9160;
     private static final ConsistencyLevel CL = ConsistencyLevel.ONE;
 
     public static void main(String[] args) throws UnsupportedEncodingException,
             InvalidRequestException, UnavailableException, TimedOutException,
-            TException, NotFoundException {
+            TException, NotFoundException, CharacterCodingException {
 
         TTransport tr = new TSocket(HOST, PORT);
         // new default in 0.7 is framed transport
@@ -69,8 +70,10 @@ public class GetExample {
 
         // insert the name column
         LOG.debug("Inserting row for key " + ByteBufferUtil.string(userIDKey));
-        client.insert(userIDKey, cp, new Column(bytes("name"),
-                bytes("George Clinton"), ts), CL);
+        Column col = new Column(bytes("name"));
+        col.setValue(bytes("George Clinton"));
+        col.setTimestamp(ts);
+        client.insert(userIDKey, cp, col, CL);
 
         LOG.debug("Row insert done.");
 

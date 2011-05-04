@@ -21,6 +21,7 @@ public class ConfigAPI {
     /**
      * Creates a new keyspace and CF.
      */
+    @SuppressWarnings("deprecation")
     public static void main(String... args) throws Exception {
 
         String keyspaceName = "DynamicKeyspace";

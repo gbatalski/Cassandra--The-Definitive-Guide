@@ -5,7 +5,8 @@ import static com.cassandraguide.hotel.Constants.CL;
 import static com.cassandraguide.hotel.Constants.CLARION_NAME;
 import static com.cassandraguide.hotel.Constants.UTF8;
 import static com.cassandraguide.hotel.Constants.WALDORF_NAME;
-import static com.cassandraguide.hotel.Constants.W_NAME;
+import static com.cassandraguide.hotel.Constants.*;
+import static com.cassandraguide.hotel.CassandraUtils.*;
 import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
 import java.io.UnsupportedEncodingException;
@@ -42,9 +43,10 @@ public class Prepopulate {
     public Prepopulate() throws Exception {
         connector = new Connector();
         client = connector.connect();
+        client.set_keyspace(KEYSPACE);
     }
 
-    void prepopulate() throws Exception {
+    public void prepopulate() throws Exception {
         // pre-populate the DB with Hotels
         insertAllHotels();
 
@@ -76,7 +78,10 @@ public class Prepopulate {
 
         long timestamp = System.nanoTime();
 
-        Column nameCol = new Column(bytes(hotelName), bytes(""), timestamp);
+        Column nameCol = new Column(bytes(hotelName));
+        nameCol.setValue(bytes(""));
+
+        nameCol.setTimestamp(timestamp);
 
         ColumnOrSuperColumn nameCosc = new ColumnOrSuperColumn();
         nameCosc.column = nameCol;
@@ -104,7 +109,9 @@ public class Prepopulate {
 
         ColumnParent parent = new ColumnParent(columnFamily);
         // here, the column name IS the value (there's no value)
-        Column col = new Column(bytes(hotelName), bytes(""), timestamp);
+        Column col = new Column(bytes(hotelName));
+        col.setValue(bytes(""));
+        col.setTimestamp(timestamp);
 
         client.insert(bytes(rowKey), parent, col, CL);
 
@@ -131,10 +138,13 @@ public class Prepopulate {
 
         long timestamp = System.nanoTime();
         String keyName = "Spring Training";
-        Column descCol = new Column(bytes("desc"),
-                bytes("Fun for baseball fans."), timestamp);
-        Column phoneCol = new Column(bytes("phone"), bytes("623-333-3333"),
-                timestamp);
+        Column descCol = new Column(bytes("desc"));
+        descCol.setValue(bytes("Fun for baseball fans."));
+        descCol.setTimestamp(timestamp);
+
+        Column phoneCol = new Column(bytes("phone"));
+        phoneCol.setValue(bytes("623-333-3333"));
+        phoneCol.setTimestamp(timestamp);
 
         List<Column> cols = new ArrayList<Column>();
         cols.add(descCol);
@@ -174,10 +184,13 @@ public class Prepopulate {
 
         long ts = System.currentTimeMillis();
         String keyName = "Phoenix Zoo";
-        Column descCol = new Column(bytes("desc"),
-                bytes("They have animals here."), ts);
+        Column descCol = new Column(bytes("desc"));
+        descCol.setValue(bytes("They have animals here."));
+        descCol.setTimestamp(ts);
 
-        Column phoneCol = new Column(bytes("phone"), bytes("480-555-9999"), ts);
+        Column phoneCol = new Column(bytes("phone"));
+        phoneCol.setValue(bytes("480-555-9999"));
+        phoneCol.setTimestamp(ts);
 
         List<Column> cols = new ArrayList<Column>();
         cols.add(descCol);
@@ -219,8 +232,9 @@ public class Prepopulate {
 
         long ts = System.nanoTime();
         String keyName = "Central Park";
-        Column descCol = new Column(bytes("desc"),
-                bytes("Walk around in the park. It's pretty."), ts);
+        Column descCol = new Column(bytes("desc"));
+        descCol.setValue(bytes("Walk around in the park. It's pretty."));
+        descCol.setTimestamp(ts);
 
         // no phone column for park
 
@@ -262,9 +276,8 @@ public class Prepopulate {
 
         long ts = System.nanoTime();
         String esbName = "Empire State Building";
-        Column descCol = new Column(bytes("desc"),
-                bytes("Great view from 102nd floor."), ts);
-        Column phoneCol = new Column(bytes("phone"), bytes("212-777-7777"), ts);
+        Column descCol = buildColumn("desc", "Great view from 102nd floor.", ts);
+        Column phoneCol = buildColumn("phone", "212-777-7777", ts);
 
         List<Column> esbCols = new ArrayList<Column>();
         esbCols.add(descCol);
@@ -340,13 +353,12 @@ public class Prepopulate {
 
         long ts = System.nanoTime();
 
-        Column nameCol = new Column(bytes("name"), bytes(W_NAME), ts);
-        Column phoneCol = new Column(bytes("phone"), bytes("415-222-2222"), ts);
-        Column addressCol = new Column(bytes("address"),
-                bytes("181 3rd Street"), ts);
-        Column cityCol = new Column(bytes("city"), bytes("San Francisco"), ts);
-        Column stateCol = new Column(bytes("state"), bytes("CA"), ts);
-        Column zipCol = new Column(bytes("zip"), bytes("94103"), ts);
+        Column nameCol = buildColumn("name", W_NAME, ts);
+        Column phoneCol = buildColumn("phone", "415-222-2222", ts);
+        Column addressCol = buildColumn("address", "181 3rd Street", ts);
+        Column cityCol = buildColumn("city", "San Francisco", ts);
+        Column stateCol = buildColumn("state", "CA", ts);
+        Column zipCol = buildColumn("zip", "94103", ts);
 
         ColumnOrSuperColumn nameCosc = new ColumnOrSuperColumn();
         nameCosc.column = nameCol;
@@ -406,13 +418,12 @@ public class Prepopulate {
 
         long ts = System.nanoTime();
 
-        Column nameCol = new Column(bytes("name"), bytes(WALDORF_NAME), ts);
-        Column phoneCol = new Column(bytes("phone"), bytes("212-555-5555"), ts);
-        Column addressCol = new Column(bytes("address"), bytes("301 Park Ave"),
-                ts);
-        Column cityCol = new Column(bytes("city"), bytes("New York"), ts);
-        Column stateCol = new Column(bytes("state"), bytes("NY"), ts);
-        Column zipCol = new Column(bytes("zip"), bytes("10019"), ts);
+        Column nameCol = buildColumn("name", WALDORF_NAME, ts);
+        Column phoneCol = buildColumn("phone", "212-555-5555", ts);
+        Column addressCol = buildColumn("address", "301 Park Ave", ts);
+        Column cityCol = buildColumn("city", "New York", ts);
+        Column stateCol = buildColumn("state", "NY", ts);
+        Column zipCol = buildColumn("zip", "10019", ts);
 
         ColumnOrSuperColumn nameCosc = new ColumnOrSuperColumn();
         nameCosc.column = nameCol;
@@ -472,13 +483,12 @@ public class Prepopulate {
 
         long ts = System.nanoTime();
 
-        Column nameCol = new Column(bytes("name"), bytes(CLARION_NAME), ts);
-        Column phoneCol = new Column(bytes("phone"), bytes("480-333-3333"), ts);
-        Column addressCol = new Column(bytes("address"),
-                bytes("3000 N. Scottsdale Rd"), ts);
-        Column cityCol = new Column(bytes("city"), bytes("Scottsdale"), ts);
-        Column stateCol = new Column(bytes("state"), bytes("AZ"), ts);
-        Column zipCol = new Column(bytes("zip"), bytes("85255"), ts);
+        Column nameCol = buildColumn("name", CLARION_NAME, ts);
+        Column phoneCol = buildColumn("phone", "480-333-3333", ts);
+        Column addressCol = buildColumn("address", "3000 N. Scottsdale Rd", ts);
+        Column cityCol = buildColumn("city", "Scottsdale", ts);
+        Column stateCol = buildColumn("state", "AZ", ts);
+        Column zipCol = buildColumn("zip", "85255", ts);
 
         ColumnOrSuperColumn nameCosc = new ColumnOrSuperColumn();
         nameCosc.column = nameCol;
@@ -539,16 +549,12 @@ public class Prepopulate {
         // set up columns for Cambria
         long ts = System.nanoTime();
 
-        Column cambriaNameCol = new Column(bytes("name"),
-                bytes("Cambria Suites Hayden"), ts);
-        Column cambriaPhoneCol = new Column(bytes("phone"),
-                bytes("480-444-4444"), ts);
-        Column cambriaAddressCol = new Column(bytes("address"),
-                bytes("400 N. Hayden"), ts);
-        Column cambriaCityCol = new Column(bytes("city"), bytes("Scottsdale"),
-                ts);
-        Column cambriaStateCol = new Column(bytes("state"), bytes("AZ"), ts);
-        Column cambriaZipCol = new Column(bytes("zip"), bytes("85255"), ts);
+        Column cambriaNameCol = buildColumn("name", "Cambria Suites Hayden", ts);
+        Column cambriaPhoneCol = buildColumn("phone", "480-444-4444", ts);
+        Column cambriaAddressCol = buildColumn("address", "400 N. Hayden", ts);
+        Column cambriaCityCol = buildColumn("city", "Scottsdale", ts);
+        Column cambriaStateCol = buildColumn("state", "AZ", ts);
+        Column cambriaZipCol = buildColumn("zip", "85255", ts);
 
         ColumnOrSuperColumn nameCosc = new ColumnOrSuperColumn();
         nameCosc.column = cambriaNameCol;
@@ -567,7 +573,8 @@ public class Prepopulate {
 
         ColumnOrSuperColumn zipCosc = new ColumnOrSuperColumn();
         zipCosc.column = cambriaZipCol;
-
+        
+        
         Mutation nameMut = new Mutation();
         nameMut.column_or_supercolumn = nameCosc;
         Mutation phoneMut = new Mutation();

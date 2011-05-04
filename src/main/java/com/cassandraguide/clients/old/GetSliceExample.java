@@ -45,7 +45,6 @@ public class GetSliceExample {
     private static final int PORT = 9160;
     private static final ConsistencyLevel CL = ConsistencyLevel.QUORUM;
 
-    private static final String keyspace = "Keyspace1";
     private static final String columnFamily = "Standard2";
 
     public static void main(String[] args) throws UnsupportedEncodingException,

@@ -9,6 +9,7 @@ import org.apache.cassandra.thrift.CfDef;
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.KsDef;
 import org.apache.cassandra.thrift.NotFoundException;
+import org.apache.cassandra.thrift.SchemaDisagreementException;
 import org.apache.cassandra.thrift.TimedOutException;
 import org.apache.cassandra.thrift.UnavailableException;
 import org.apache.thrift.TException;
@@ -26,9 +27,10 @@ import org.apache.thrift.TException;
  */
 public class DefineKeyspaceExample {
 
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws UnsupportedEncodingException,
             InvalidRequestException, UnavailableException, TimedOutException,
-            TException, NotFoundException, InterruptedException {
+            TException, NotFoundException, InterruptedException, SchemaDisagreementException {
 
         Connector conn = new Connector();
         Cassandra.Client client = conn.connect();
